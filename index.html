@@ -1,0 +1,341 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Awallin Photography - melihat keindahan dalam setiap cahaya.">
+  <title>Awallin | Let's Make a Moment</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #d8d8d8;
+      --paper-soft: #e8e8e8;
+      --paper-bright: #fafafa;
+      --ink: #1c1c1c;
+      --muted: #626262;
+      --line: rgba(28, 28, 28, 0.14);
+      --white: #fff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: linear-gradient(180deg, #c7c7c7 0%, #dedede 18%, #f1f1f1 42%, #fafafa 70%, #e7e7e7 100%);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      overflow-x: hidden;
+    }
+    body.intro-active { overflow: hidden; }
+    a { color: inherit; text-decoration: none; }
+    button { border: 0; background: none; color: inherit; font: inherit; cursor: pointer; }
+    img { display: block; width: 100%; object-fit: cover; }
+    .welcome-screen {
+      align-items: center;
+      background: linear-gradient(145deg, #c9c9c9 0%, #e8e8e8 55%, #fafafa 100%);
+      display: flex;
+      flex-direction: column;
+      inset: 0;
+      justify-content: center;
+      opacity: 1;
+      position: fixed;
+      transition: opacity .7s ease, visibility .7s ease;
+      visibility: visible;
+      z-index: 30;
+    }
+    .welcome-screen.dismissed { opacity: 0; pointer-events: none; visibility: hidden; }
+    .welcome-brand { align-items: center; display: flex; gap: 10px; left: clamp(24px, 5vw, 72px); position: absolute; top: 28px; }
+    .welcome-brand .brand-mark { height: 34px; width: 34px; }
+    .welcome-brand span:last-child { font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+    .welcome-content { align-items: center; display: flex; flex-direction: column; padding: 24px; text-align: center; }
+    .welcome-kicker { color: var(--muted); font-size: 10px; letter-spacing: .2em; text-transform: uppercase; }
+    .welcome-greeting {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(70px, 16vw, 170px);
+      font-weight: 500;
+      letter-spacing: -.06em;
+      line-height: 1.1;
+      margin: 18px 0;
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity .2s ease, transform .2s ease;
+    }
+    .welcome-greeting.changing { opacity: 0; transform: translateY(12px); }
+    .welcome-language { color: var(--muted); font-size: 10px; letter-spacing: .16em; text-transform: uppercase; }
+    .welcome-skip { bottom: 30px; font-size: 10px; letter-spacing: .14em; padding: 12px; position: absolute; right: clamp(20px, 5vw, 64px); text-transform: uppercase; }
+    .welcome-skip span { font-size: 16px; margin-left: 8px; }
+    .site-header { align-items: center; display: flex; justify-content: space-between; left: 0; padding: 24px clamp(24px, 5vw, 72px); position: absolute; top: 0; width: 100%; z-index: 5; }
+    .brand { align-items: center; display: flex; gap: 12px; font-size: 14px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+    .brand-mark { align-items: center; border: 1px solid var(--ink); border-radius: 50%; display: flex; font-family: Georgia, serif; font-size: 19px; height: 38px; justify-content: center; width: 38px; }
+    .main-nav { display: flex; gap: clamp(18px, 3vw, 42px); }
+    .main-nav a { color: #555; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
+    .main-nav a:hover { color: var(--ink); }
+    .menu-toggle { display: none; font-size: 24px; line-height: 1; }
+    .hero {
+      background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.08) 100%);
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(360px, .95fr);
+      min-height: 760px;
+    }
+    .hero-copy { align-items: flex-start; display: flex; flex-direction: column; justify-content: center; padding: 140px clamp(24px, 9vw, 150px) 90px; }
+    .eyebrow, .section-label { color: var(--muted); font-size: 11px; letter-spacing: .18em; text-transform: uppercase; }
+    .eyebrow { margin-bottom: 24px; }
+    h1, h2, h3 { font-family: 'Playfair Display', Georgia, serif; font-weight: 500; }
+    h1 { font-size: clamp(54px, 7.4vw, 116px); letter-spacing: -.055em; line-height: .93; max-width: 680px; }
+    h1 em { color: #696969; font-weight: 500; }
+    .hero-copy p { color: var(--muted); font-size: 15px; line-height: 1.8; margin-top: 32px; max-width: 390px; }
+    .hero-link { align-items: center; border-bottom: 1px solid var(--ink); display: inline-flex; font-size: 11px; gap: 15px; letter-spacing: .16em; margin-top: 40px; padding-bottom: 12px; text-transform: uppercase; }
+    .hero-link span { font-size: 18px; }
+    .hero-image { min-height: 760px; overflow: hidden; position: relative; background: #dedede; }
+    .hero-image img {
+      height: 100%;
+      margin-top: 0;
+      object-fit: cover;
+      object-position: center;
+      transition: transform 1.2s ease;
+      width: 100%;
+    }
+    .hero-image:hover img { transform: translateY(var(--parallax-y, 0px)) scale(1.03); }
+    .hero-image figcaption { bottom: 28px; color: var(--white); font-size: 10px; left: 30px; letter-spacing: .13em; position: absolute; text-transform: uppercase; }
+    .intro {
+      background: linear-gradient(180deg, rgba(203, 203, 203, 0.9) 0%, rgba(231, 231, 231, 0.95) 32%, rgba(246, 246, 246, 0.88) 72%, rgba(255, 255, 255, 0.9) 100%);
+      display: grid;
+      gap: 40px;
+      grid-template-columns: 1fr 1.2fr;
+      padding: 110px clamp(24px, 9vw, 150px);
+    }
+    .intro h2 { font-size: clamp(36px, 5vw, 72px); letter-spacing: -.045em; line-height: 1.02; max-width: 700px; }
+    .intro-copy { align-self: end; color: #555; font-size: 15px; line-height: 1.9; max-width: 460px; }
+    .signature { font-family: 'Playfair Display', serif; font-size: 26px; font-style: italic; margin-top: 24px; }
+    .cv-section {
+      background: linear-gradient(180deg, rgba(248, 248, 248, 0.68) 0%, rgba(255, 255, 255, 0.9) 100%);
+      display: grid;
+      gap: 60px;
+      grid-template-columns: .7fr 1.3fr;
+      padding: 100px clamp(24px, 9vw, 150px);
+    }
+    .cv-section h2 { font-size: clamp(38px, 5vw, 68px); letter-spacing: -.05em; line-height: .98; margin-top: 22px; max-width: 360px; }
+    .cv-content { display: grid; gap: 34px; grid-template-columns: 1fr 1fr; }
+    .cv-block { border-top: 1px solid #cecece; padding-top: 14px; }
+    .cv-block h3 { font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: .15em; margin-bottom: 16px; text-transform: uppercase; }
+    .cv-block p, .cv-block li { color: #626262; font-size: 13px; line-height: 1.75; }
+    .cv-block ul { list-style: none; }
+    .cv-block li { border-bottom: 1px solid #d7d7d7; padding: 9px 0; }
+    .cv-block li span { color: var(--ink); display: block; font-family: 'Playfair Display', serif; font-size: 18px; }
+    .portfolio {
+      background: linear-gradient(145deg, #555 0%, #292929 42%, #111 100%);
+      color: #f2f2f2;
+      --muted: #b0b0b0;
+      --line: rgba(255, 255, 255, 0.18);
+      padding: 120px clamp(24px, 7vw, 112px);
+    }
+    .section-heading { align-items: end; display: flex; justify-content: space-between; margin-bottom: 42px; }
+    .section-heading h2 { font-size: clamp(38px, 5vw, 70px); letter-spacing: -.04em; line-height: 1; }
+    .section-heading p { color: var(--muted); font-size: 13px; line-height: 1.6; max-width: 260px; }
+    .filters { display: flex; gap: 25px; margin-bottom: 30px; }
+    .filter { color: var(--muted); font-size: 11px; letter-spacing: .12em; padding-bottom: 8px; text-transform: uppercase; }
+    .filter.active, .filter:hover { border-bottom: 1px solid var(--ink); color: var(--ink); }
+    .gallery { display: grid; gap: 18px; grid-template-columns: repeat(12, 1fr); }
+    .gallery-item { cursor: pointer; overflow: hidden; position: relative; }
+    .gallery-item img {
+      aspect-ratio: 1 / 1.18;
+      filter: saturate(.88);
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      transition: filter .5s ease, transform .7s ease;
+      width: 100%;
+    }
+    .gallery-item:hover img { filter: saturate(1); transform: translateY(var(--parallax-y, 0px)) scale(1.045); }
+    .parallax-image { transform: translateY(var(--parallax-y, 0px)); }
+    .gallery-item:nth-child(1) { grid-column: span 5; }
+    .gallery-item:nth-child(2) { grid-column: span 3; margin-top: 80px; }
+    .gallery-item:nth-child(3) { grid-column: span 4; }
+    .gallery-item:nth-child(4) { grid-column: 2 / span 4; margin-top: 22px; }
+    .gallery-item:nth-child(5) { grid-column: 6 / span 3; margin-top: 102px; }
+    .gallery-item:nth-child(6) { grid-column: 10 / span 3; margin-top: 22px; }
+    .gallery-caption { background: rgba(255,255,255,.94); bottom: 12px; color: var(--ink); left: 12px; padding: 8px 10px; position: absolute; }
+    .gallery-caption strong { display: block; font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 500; }
+    .gallery-caption small { color: #777; font-size: 9px; letter-spacing: .12em; text-transform: uppercase; }
+    .services { background: #191919; border-top: 1px solid var(--line); color: #f2f2f2; display: grid; gap: 80px; grid-template-columns: .75fr 1.25fr; padding: 110px clamp(24px, 9vw, 150px); --muted: #aaa; --line: rgba(255, 255, 255, 0.18); }
+    .services h2 { font-size: clamp(38px, 5vw, 68px); letter-spacing: -.05em; line-height: .98; }
+    .service-list { border-top: 1px solid var(--line); }
+    .service { align-items: center; border-bottom: 1px solid var(--line); display: grid; gap: 20px; grid-template-columns: 50px 1fr 30px; padding: 25px 0; }
+    .service-number { color: var(--muted); font-size: 11px; }
+    .service h3 { font-size: 25px; }
+    .service p { color: var(--muted); font-size: 13px; line-height: 1.6; margin-top: 5px; }
+    .service-arrow { font-size: 24px; text-align: right; }
+    .contact { background: linear-gradient(145deg, #171717 0%, #080808 100%); color: #dedede; display: grid; gap: 50px; grid-template-columns: 1fr 1fr; padding: 110px clamp(24px, 9vw, 150px); }
+    .contact .section-label { color: #aaa; }
+    .contact h2 { font-size: clamp(44px, 6vw, 84px); letter-spacing: -.05em; line-height: .97; margin-top: 22px; max-width: 620px; }
+    .contact-details { align-self: end; border-top: 1px solid #444; padding-top: 22px; }
+    .contact-details p { color: #bbb; font-size: 13px; line-height: 1.8; margin-bottom: 22px; max-width: 300px; }
+    .email { border-bottom: 1px solid #aaa; display: inline-block; font-family: 'Playfair Display', serif; font-size: 24px; padding-bottom: 8px; }
+    footer { align-items: center; color: var(--muted); display: flex; font-size: 10px; justify-content: space-between; letter-spacing: .12em; padding: 24px clamp(24px, 5vw, 72px); text-transform: uppercase; }
+    .lightbox { align-items: center; background: rgba(18,18,18,.94); display: flex; inset: 0; justify-content: center; opacity: 0; padding: 30px; pointer-events: none; position: fixed; transition: opacity .25s ease; z-index: 20; }
+    .lightbox.open { opacity: 1; pointer-events: auto; }
+    .lightbox img { height: min(84vh, 760px); max-width: min(88vw, 900px); object-fit: contain; width: auto; }
+    .close-lightbox { color: white; font-size: 34px; position: absolute; right: 30px; top: 20px; }
+    @media (max-width: 760px) {
+      .welcome-brand { left: 22px; top: 20px; }
+      .welcome-skip { bottom: 20px; }
+      .site-header { padding: 18px 22px; }
+      .main-nav { background: var(--paper); display: none; flex-direction: column; gap: 22px; padding: 24px; position: absolute; right: 20px; top: 64px; width: 180px; }
+      .main-nav.open { display: flex; }
+      .menu-toggle { display: block; }
+      .hero { display: flex; flex-direction: column; }
+      .hero-copy { min-height: 570px; padding: 130px 24px 70px; }
+      .hero-image { min-height: 460px; }
+      .intro, .cv-section, .services, .contact { grid-template-columns: 1fr; padding-bottom: 80px; padding-top: 80px; }
+      .intro-copy { margin-top: 8px; }
+      .cv-content { grid-template-columns: 1fr; }
+      .section-heading { align-items: start; flex-direction: column; gap: 22px; }
+      .portfolio { padding-bottom: 80px; padding-top: 80px; }
+      .gallery { gap: 12px; }
+      .gallery-item:nth-child(n) { grid-column: span 6; margin-top: 0; }
+      .gallery-item:nth-child(3), .gallery-item:nth-child(6) { margin-top: 45px; }
+      .service { grid-template-columns: 34px 1fr 20px; }
+      .service h3 { font-size: 21px; }
+      footer { align-items: flex-start; flex-direction: column; gap: 10px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body class="intro-active">
+  <section class="welcome-screen" id="welcomeScreen" role="dialog" aria-modal="true" aria-label="Sambutan Awallin">
+    <a class="welcome-brand" href="#top" aria-label="Awallin, masuk ke halaman utama"><span class="brand-mark">A</span><span>Awallin</span></a>
+    <div class="welcome-content">
+      <p class="welcome-kicker">A little hello from around the world</p>
+      <p class="welcome-greeting" id="welcomeGreeting" aria-live="polite">Halo</p>
+      <p class="welcome-language" id="welcomeLanguage">Indonesia</p>
+    </div>
+    <button class="welcome-skip" id="welcomeSkip" type="button">Masuk <span aria-hidden="true">↗</span></button>
+  </section>
+  <header class="site-header">
+    <a class="brand" href="#top"><span class="brand-mark">A</span><span>Awallin</span></a>
+    <nav class="main-nav" id="mainNav"><a href="#about">About</a><a href="#cv">CV</a><a href="#work">Work</a><a href="#services">Services</a><a href="#contact">Contact</a></nav>
+    <button class="menu-toggle" id="menuToggle" aria-label="Buka menu">+</button>
+  </header>
+  <main id="top">
+    <section class="hero">
+      <div class="hero-copy"><div class="eyebrow">Photographer / Visual storyteller / Let's Build a New Moment</div><h1>I see everything <em>beautiful,</em> so you can see too.</h1><p>Mengabadikan momen yang terasa jujur, tenang, dan dekat. Setiap foto adalah cara baru untuk mengingat cahaya.</p><a class="hero-link" href="#work">Explore my work <span>â†˜</span></a></div>
+      <figure class="hero-image"><img class="parallax-image" data-parallax="0.16" src="fotoku.jpeg" data-fallback="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=1200&q=85" onerror="this.onerror=null; this.src=this.dataset.fallback" alt="Foto pribadi Awallin"><figcaption>01 / Finding light in quiet places</figcaption></figure>
+    </section>
+    <section class="intro" id="about"><div class="section-label">A little about me</div><div><h2>Beauty lives in the details we almost miss.</h2><div class="intro-copy">Saya percaya pekerjaan terbaik lahir dari perpaduan logika dan rasa. Saya merancang antarmuka web yang fungsional, lalu mengisinya dengan cerita visual yang terasa manusiawi.</div><div class="signature">Awallin Yusuf Ikrar Putra.</div></div></section>
+    <section class="cv-section" id="cv"><div><div class="section-label">Curriculum vitae</div><h2>Who I am, beyond the frame.</h2></div><div class="cv-content"><div class="cv-block"><h3>Profile</h3><p>Creative developer dengan minat pada web modern, integrasi AI, dan fotografi aesthetic. Saya senang mengubah ide yang masih abstrak menjadi pengalaman yang jelas, tenang, dan berkesan.</p></div><div class="cv-block"><h3>Core skills</h3><ul><li><span>Web development</span>HTML, CSS, JavaScript</li><li><span>Data & systems</span>PHP, MySQL, Oracle SQL</li><li><span>Visual direction</span>Photography, composition, editing</li></ul></div><div class="cv-block"><h3>Experience</h3><p>Merancang website portfolio dan sistem digital interaktif dengan perhatian pada struktur, performa, dan cara pengguna merasakan sebuah halaman.</p></div><div class="cv-block"><h3>Currently exploring</h3><p>AI integration, visual storytelling, dan cara membuat teknologi terasa lebih personal.</p></div></div></section>
+    <section class="portfolio" id="work">
+      <div class="section-heading"><div><div class="section-label">Selected stories</div><h2>Recent work</h2></div><p>Foto-foto aesthetic yang saya ambil dari perjalanan, cahaya, dan momen yang ingin saya simpan.</p></div>
+      <div class="filters" aria-label="Filter portofolio"><button class="filter active" data-filter="all">All work</button><button class="filter" data-filter="portrait">Portrait</button><button class="filter" data-filter="travel">Travel</button></div>
+      <div class="gallery">
+        <figure class="gallery-item" data-category="travel" data-full="mejaaesthetic.png" data-fallback="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=90"><img class="parallax-image" data-parallax="0.08" src="mejaaesthetic.png" data-fallback="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=900&q=85" onerror="this.onerror=null; this.src=this.dataset.fallback" alt="Foto meja aesthetic cafe"><figcaption class="gallery-caption"><strong>Into the wild</strong><small>Travel / 2025</small></figcaption></figure>
+        <figure class="gallery-item" data-category="travel" data-full="kukis.png" data-fallback="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=1600&q=90"><img class="parallax-image" data-parallax="0.05" src="kukis.png" data-fallback="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=700&q=85" onerror="this.onerror=null; this.src=this.dataset.fallback" alt="Foto kukis di piring"><figcaption class="gallery-caption"><strong>Sweet bite</strong><small>Still life / 2025</small></figcaption></figure>
+        <figure class="gallery-item" data-category="travel" data-full="roti.png" data-fallback="https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1600&q=90"><img src="roti.png" data-fallback="https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=800&q=85" onerror="this.onerror=null; this.src=this.dataset.fallback" alt="Foto roti di rak"><figcaption class="gallery-caption"><strong>Fresh from the oven</strong><small>Travel / 2024</small></figcaption></figure>
+        <figure class="gallery-item" data-category="portrait" data-full="batman.png" data-fallback="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1600&q=90"><img src="batman.png" data-fallback="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=85" onerror="this.onerror=null; this.src=this.dataset.fallback" alt="Foto Batman"><figcaption class="gallery-caption"><strong>Her own light</strong><small>Portrait / 2024</small></figcaption></figure>
+        <figure class="gallery-item" data-category="travel" data-full="photos/forest.jpg" data-fallback="https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1600&q=90"><img src="photos/forest.jpg" data-fallback="https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=700&q=85" onerror="this.onerror=null; this.src=this.dataset.fallback" alt="Jalan menuju hutan"><figcaption class="gallery-caption"><strong>Wander north</strong><small>Travel / 2024</small></figcaption></figure>
+        <figure class="gallery-item" data-category="portrait" data-full="photos/portrait-man.jpg" data-fallback="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=700&q=85"><img src="photos/portrait-man.jpg" data-fallback="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=700&q=85" onerror="this.onerror=null; this.src=this.dataset.fallback" alt="Potret pria dengan latar gelap"><figcaption class="gallery-caption"><strong>Quiet confidence</strong><small>Portrait / 2024</small></figcaption></figure>
+      </div>
+    </section>
+    <section class="services" id="services"><div><div class="section-label">What I do</div><h2>Let the story begin.</h2></div><div class="service-list"><article class="service"><div class="service-number">01</div><div><h3>Portrait sessions</h3><p>Potret personal yang aesthetic, natural, hangat, dan penuh karakter.</p></div><div class="service-arrow">—</div></article><article class="service"><div class="service-number">02</div><div><h3>Travel stories</h3><p>Visual storytelling untuk tempat, perjalanan, dan brand yang punya jiwa.</p></div><div class="service-arrow">â†—</div></article><article class="service"><div class="service-number">03</div><div><h3>Creative projects</h3><p>Kolaborasi foto untuk kampanye, editorial, dan ide-ide baru.</p></div><div class="service-arrow">â†—</div></article></div></section>
+    <section class="contact" id="contact"><div><div class="section-label">Have a story to tell?</div><h2>Let's make something worth remembering.</h2></div><div class="contact-details"><p>Ceritakan tentang proyek atau momen yang ingin kamu abadikan. Saya akan menghubungi kamu kembali sesegera mungkin.</p><a class="email" href="mailto:hello@awalliny.com">hello@awalliny.com</a></div></section>
+  </main>
+  <footer><span>Awallin Photography</span><span>Â© 2026 All rights reserved</span><span>Semarang / Indonesia</span></footer>
+  <div class="lightbox" id="lightbox" role="dialog" aria-label="Preview foto"><button class="close-lightbox" id="closeLightbox" aria-label="Tutup preview">Ã—</button><img id="lightboxImage" src="" alt=""></div>
+  <script>
+    const welcomeScreen = document.getElementById('welcomeScreen');
+    const welcomeGreeting = document.getElementById('welcomeGreeting');
+    const welcomeLanguage = document.getElementById('welcomeLanguage');
+    const welcomeSkip = document.getElementById('welcomeSkip');
+    const greetings = [
+      { word: 'Halo', language: 'Indonesia' },
+      { word: 'Bonjour', language: 'France' },
+      { word: 'Hello', language: 'English' },
+      { word: 'Hola', language: 'Español' },
+      { word: 'Ciao', language: 'Italia' },
+      { word: 'こんにちは', language: '日本' },
+      { word: '안녕하세요', language: '한국' },
+      { word: 'مرحباً', language: 'العربية' }
+    ];
+    let greetingIndex = 0;
+    let greetingTimer;
+    let welcomeDismissed = false;
+
+    function dismissWelcome() {
+      if (welcomeDismissed) return;
+      welcomeDismissed = true;
+      window.clearTimeout(greetingTimer);
+      welcomeScreen.classList.add('dismissed');
+      document.body.classList.remove('intro-active');
+      window.setTimeout(() => welcomeScreen.remove(), 750);
+    }
+
+    function showNextGreeting() {
+      greetingTimer = window.setTimeout(() => {
+        if (welcomeDismissed) return;
+        greetingIndex += 1;
+        if (greetingIndex >= greetings.length) {
+          dismissWelcome();
+          return;
+        }
+        welcomeGreeting.classList.add('changing');
+        window.setTimeout(() => {
+          if (welcomeDismissed) return;
+          welcomeGreeting.textContent = greetings[greetingIndex].word;
+          welcomeLanguage.textContent = greetings[greetingIndex].language;
+          welcomeGreeting.classList.remove('changing');
+          showNextGreeting();
+        }, 220);
+      }, 400);
+    }
+
+    welcomeSkip.addEventListener('click', dismissWelcome);
+    welcomeScreen.querySelector('.welcome-brand').addEventListener('click', dismissWelcome);
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && !welcomeScreen.classList.contains('dismissed')) dismissWelcome();
+    });
+    showNextGreeting();
+
+    const menuToggle = document.getElementById('menuToggle');
+    const mainNav = document.getElementById('mainNav');
+    const filters = document.querySelectorAll('.filter');
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImage = document.getElementById('lightboxImage');
+    menuToggle.addEventListener('click', () => { mainNav.classList.toggle('open'); menuToggle.textContent = mainNav.classList.contains('open') ? 'Ã—' : '+'; });
+    filters.forEach((filter) => filter.addEventListener('click', () => { filters.forEach((item) => item.classList.remove('active')); filter.classList.add('active'); const selected = filter.dataset.filter; galleryItems.forEach((item) => { item.hidden = selected !== 'all' && item.dataset.category !== selected; }); }));
+    galleryItems.forEach((item) => item.addEventListener('click', () => {
+      lightboxImage.onerror = () => { lightboxImage.onerror = null; lightboxImage.src = item.dataset.fallback; };
+      lightboxImage.src = item.dataset.full;
+      lightboxImage.alt = item.querySelector('img').alt;
+      lightbox.classList.add('open');
+    }));
+    document.getElementById('closeLightbox').addEventListener('click', () => lightbox.classList.remove('open'));
+    lightbox.addEventListener('click', (event) => { if (event.target === lightbox) lightbox.classList.remove('open'); });
+    document.addEventListener('keydown', (event) => { if (event.key === 'Escape') lightbox.classList.remove('open'); });
+
+    const parallaxImages = document.querySelectorAll('[data-parallax]');
+    let parallaxFrame = null;
+
+    function updateParallax() {
+      parallaxImages.forEach((image) => {
+        const bounds = image.getBoundingClientRect();
+        const distanceFromCenter = bounds.top + bounds.height / 2 - window.innerHeight / 2;
+        const speed = Number(image.dataset.parallax);
+        image.style.setProperty('--parallax-y', `${distanceFromCenter * speed * -1}px`);
+      });
+      parallaxFrame = null;
+    }
+
+    function requestParallaxUpdate() {
+      if (!parallaxFrame) parallaxFrame = requestAnimationFrame(updateParallax);
+    }
+
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      window.addEventListener('scroll', requestParallaxUpdate, { passive: true });
+      window.addEventListener('resize', requestParallaxUpdate);
+      requestParallaxUpdate();
+    }
+  </script>
+</body>
+</html>
